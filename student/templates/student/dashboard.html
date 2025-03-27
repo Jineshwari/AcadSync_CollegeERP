@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f2f2f2;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px #ccc;
+            border-radius: 8px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .profile-btn {
+            background: #2196F3;
+        }
+        .profile-btn:hover {
+            background: #1976D2;
+        }
+        .logout-btn {
+            background: #f44336;
+        }
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+        .assignment-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📚 Student Dashboard</h1>
+        
+        <!-- Profile and Logout Buttons -->
+        <div>
+            <a href="{% url 'student_profile' %}" class="btn profile-btn">👤 Profile</a>
+            <a href="{% url 'logout' %}" class="btn logout-btn">🚪 Logout</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Pending Assignments</h2>
+    {% if pending_assignments %}
+        {% for assignment in pending_assignments %}
+            <div class="assignment-card">
+                <h3>{{ assignment.title }}</h3>
+                <p>{{ assignment.description }}</p>
+                <p>Due Date: <strong>{{ assignment.due_date }}</strong></p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No pending assignments. 🎉</p>
+    {% endif %}
+
+    <h2>Submitted Assignments</h2>
+    {% if submitted_assignments %}
+        {% for assignment in submitted_assignments %}
+            <div class="assignment-card" style="background: #e8f5e9;">
+                <h3>{{ assignment.title }}</h3>
+                <p>{{ assignment.description }}</p>
+                <p>Submitted at: <strong>{{ assignment.submitted_at }}</strong></p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No submitted assignments yet. ✅</p>
+    {% endif %}
+
+</div>
+
+<script>
+    console.log("Student dashboard loaded successfully!");
+</script>
+
+</body>
+</html>

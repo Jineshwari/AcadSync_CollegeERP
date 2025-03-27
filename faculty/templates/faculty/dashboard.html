@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px #ccc;
+            border-radius: 10px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Faculty Dashboard</h1>
+    <a href="{% url 'faculty_profile' %}" class="btn">👤 Profile</a>
+
+    <p>Welcome, {{ user.username }} 👋</p>
+    <a href="{% url 'create_classroom' %}">
+        <button>Create New Classroom</button>
+    </a>
+    
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
+
+</body>
+</html>

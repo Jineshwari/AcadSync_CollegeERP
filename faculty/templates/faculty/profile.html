@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ccc;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .edit-btn {
+            background: #2196F3;
+        }
+        .edit-btn:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="profile-header">
+        <h1>👨‍🏫 Faculty Profile</h1>
+        <a href="{% url 'edit_faculty_profile' %}" class="btn edit-btn">✏️ Edit Profile</a>
+    </div>
+
+    <hr>
+
+    <div>
+        <p><strong>Username:</strong> {{ faculty.username }}</p>
+        <p><strong>Email:</strong> {{ faculty.email }}</p>
+        <p><strong>First Name:</strong> {{ faculty.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ faculty.last_name }}</p>
+        <p><strong>Phone:</strong> {{ faculty.phone }}</p>
+
+        {% if faculty.profile_photo %}
+            <img src="{{ faculty.profile_photo.url }}" alt="Profile Photo" class="profile-photo">
+        {% else %}
+            <p>No profile photo uploaded.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'faculty_dashboard' %}" class="btn">🏠 Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
