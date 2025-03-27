@@ -1,0 +1,14 @@
+# Django-specific ignores
+*.sqlite3          # SQLite database files
+*.pyc              # Compiled Python files
+__pycache__/       # Python cache
+*.log              # Log files
+.env               # Environment variables
+*.db               # Database files
+settings.py        # Sensitive Django settings
+
+# IDE and OS files
+.vscode/
+.idea/
+*.DS_Store
+*.bak
