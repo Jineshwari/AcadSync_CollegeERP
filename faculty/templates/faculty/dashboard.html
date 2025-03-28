@@ -1,52 +1,359 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Faculty Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --light-gray: #f8f9fa;
+            --border-color: #e2e8f0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--primary-color);
         }
-        h1 {
-            text-align: center;
-            color: #444;
+
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
         }
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            background: #fff;
+
+        .dashboard-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-title i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background-color: var(--light-gray);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .modal-content-custom {
+            background: white;
+            width: 500px;
+            margin: 10% auto;
             padding: 20px;
-            box-shadow: 0 0 10px #ccc;
-            border-radius: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        a {
-            display: block;
-            text-align: center;
-            color: #007bff;
-            text-decoration: none;
+
+        .table-responsive {
+            margin-top: 20px;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .btn-action {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="container-fluid">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header row align-items-center">
+            <div class="col-md-6">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-university"></i> Faculty Dashboard
+                </h1>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </header>
 
-<div class="container">
-    <h1>Faculty Dashboard</h1>
-    <a href="{% url 'faculty_profile' %}" class="btn">👤 Profile</a>
+        <!-- Classroom Management -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Classroom Management</h4>
+                        <div>
+                            <button class="btn btn-primary btn-action" onclick="openModal('create-classroom-modal')">
+                                <i class="fas fa-plus"></i> Create Classroom
+                            </button>
+                            <button class="btn btn-secondary btn-action" onclick="openModal('join-classroom-modal')">
+                                <i class="fas fa-link"></i> Join Classroom
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="classroom-list">
+                            {% if classrooms %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                                <th>Join Code</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for classroom in classrooms %}
+                                            <tr>
+                                                <td>{{ classroom.name }}</td>
+                                                <td>{{ classroom.description }}</td>
+                                                <td><code>{{ classroom.join_code }}</code></td>
+                                                <td>
+                                                    <a href="{% url 'classroom_detail' classroom.id %}" class="btn btn-sm btn-info me-2">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    <a href="{% url 'upload_assignment' classroom.id %}" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-upload"></i> Assignment
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No classrooms created yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <p>Welcome, {{ user.username }} 👋</p>
-    <a href="{% url 'create_classroom' %}">
-        <button>Create New Classroom</button>
-    </a>
-    
-    <a href="{% url 'logout' %}">Logout</a>
-</div>
+        <!-- GitHub Submissions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">GitHub Repositories</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if github_submissions %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Repository</th>
+                                            <th>Stars</th>
+                                            <th>Forks</th>
+                                            <th>Last Updated</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for submission in github_submissions %}
+                                            <tr>
+                                                <td>{{ submission.student.username }}</td>
+                                                <td>{{ submission.repo_name }}</td>
+                                                <td>{{ submission.stars }}</td>
+                                                <td>{{ submission.forks }}</td>
+                                                <td>{{ submission.last_updated|date:"d M Y, H:i" }}</td>
+                                                <td>
+                                                    <a href="{{ submission.repo_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-external-link-alt"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No GitHub repositories submitted yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Create Classroom Modal -->
+    <div id="create-classroom-modal" class="modal-custom">
+        <div class="modal-content-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Create Classroom</h4>
+                <button class="btn-close" onclick="closeModal('create-classroom-modal')"></button>
+            </div>
+            <form id="create-classroom-form">
+                <div class="mb-3">
+                    <input type="text" name="name" class="form-control" placeholder="Classroom Name" required>
+                </div>
+                <div class="mb-3">
+                    <textarea name="description" class="form-control" placeholder="Description" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Create Classroom</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Join Classroom Modal -->
+    <div id="join-classroom-modal" class="modal-custom">
+        <div class="modal-content-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Join Classroom</h4>
+                <button class="btn-close" onclick="closeModal('join-classroom-modal')"></button>
+            </div>
+            <form id="join-classroom-form">
+                <div class="mb-3">
+                    <input type="text" name="join_code" class="form-control" placeholder="Enter Join Code" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Join Classroom</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript remains the same as in the original template
+        function fetchClassrooms() {
+            fetch("{% url 'get_classrooms_ajax' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('classroom-list');
+                    list.innerHTML = '';
+
+                    if (data.length > 0) {
+                        let tableHtml = `
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Join Code</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        data.forEach(classroom => {
+                            tableHtml += `
+                                <tr>
+                                    <td>${classroom.name}</td>
+                                    <td>${classroom.description}</td>
+                                    <td><code>${classroom.join_code}</code></td>
+                                    <td>
+                                        <a href="/faculty/classroom/${classroom.id}/" class="btn btn-sm btn-info me-2">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <a href="/faculty/classroom/${classroom.id}/upload-assignment/" class="btn btn-sm btn-success">
+                                            <i class="fas fa-upload"></i> Assignment
+                                        </a>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        tableHtml += `
+                                </tbody>
+                            </table>
+                        `;
+                        list.innerHTML = tableHtml;
+                    } else {
+                        list.innerHTML = '<p class="text-muted">No classrooms created yet.</p>';
+                    }
+                })
+                .catch(error => console.error('Error fetching classrooms:', error));
+        }
+
+        // Rest of the JavaScript remains the same
+        document.getElementById("create-classroom-form").onsubmit = function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch("{% url 'create_classroom_ajax' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Classroom "${data.name}" created! Code: ${data.join_code}`);
+                    closeModal('create-classroom-modal');
+                    fetchClassrooms();
+                }
+            });
+        };
+
+        document.getElementById("join-classroom-form").onsubmit = function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch("{% url 'join_classroom_ajax' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Joined classroom: ${data.name}`);
+                    closeModal('join-classroom-modal');
+                    fetchClassrooms();
+                } else {
+                    alert(data.message);
+                }
+            });
+        };
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onload = fetchClassrooms;
+    </script>
 </body>
 </html>
+{% endblock %}

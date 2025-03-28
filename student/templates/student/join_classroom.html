@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🔗 Join Classroom</h1>
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="join_code" placeholder="Enter Join Code" required>
+    <button type="submit">Join</button>
+</form>
+{% endblock %}

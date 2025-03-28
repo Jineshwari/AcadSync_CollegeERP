@@ -1,0 +1,13 @@
+<div class="container">
+    <h2>📂 {{ submission.repo_name }}</h2>
+    <p>GitHub Repo: <a href="{{ submission.repo_url }}" target="_blank">{{ submission.repo_url }}</a></p>
+
+    <h3>File Structure:</h3>
+    <ul>
+        {% for file in file_structure %}
+            <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'download_repo' submission.id %}" class="btn">📥 Download as ZIP</a>
+</div>

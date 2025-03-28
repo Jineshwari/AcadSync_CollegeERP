@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>📚 Classroom: {{ classroom.name }}</h1>
+
+<h2>Assignments</h2>
+<ul>
+    {% for assignment in assignments %}
+        <li>
+            <strong>{{ assignment.title }}</strong> - Due: {{ assignment.due_date }}
+            <p>{{ assignment.description }}</p>
+
+            {% if assignment in submissions %}
+                <p>✅ Submitted!</p>
+            {% else %}
+                <a href="{% url 'upload_submission' assignment.id %}">📤 Upload Assignment</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

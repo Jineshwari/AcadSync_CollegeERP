@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'faculty',
     'student',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -50,14 +51,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'collegeERP.urls'
 
+# settings.py
+
+# Add 'templates' directory to Django's template directories
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],   # ✅ Add this line
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,3 +134,16 @@ AUTH_USER_MODEL = 'accounts.User'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# GitHub OAuth Configuration
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23liPHiM9ujL2eOcybid'
+SOCIAL_AUTH_GITHUB_SECRET = '70e25b8ebc23b87e755bac43460badd8849644ed'
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',  # GitHub OAuth
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'  # Redirect after successful GitHub login
+LOGOUT_REDIRECT_URL = 'login'

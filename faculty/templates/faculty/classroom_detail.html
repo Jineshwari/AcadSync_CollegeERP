@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>🏫 {{ classroom.name }}</h1>
+    <p>{{ classroom.description }}</p>
+    <p>Join Code: <code>{{ classroom.join_code }}</code></p>
+
+    <h2>👩‍🎓 Students</h2>
+    {% if students %}
+        <ul>
+            {% for student in students %}
+                <li>{{ student.username }} ({{ student.email }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No students have joined yet. 😔</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>📚 Assignments</h2>
+    {% if assignments %}
+        <ul>
+            {% for assignment in assignments %}
+                <li>
+                    <strong>{{ assignment.title }}</strong>  
+                    <p>{{ assignment.description }}</p>
+                    <p>Due: {{ assignment.due_date }}</p>
+                    <p>Marks: {{ assignment.marks }}</p>
+
+                    {% if not is_faculty %}
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="submit_assignment" value="1">
+                        <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+
+                        <label>Submit File:</label>
+                        <input type="file" name="file" required>
+                        <button type="submit">📤 Submit</button>
+                    </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No assignments uploaded yet. 🤓</p>
+    {% endif %}
+
+    {% if is_faculty %}
+    <hr>
+    <h2>✅ Submissions</h2>
+    {% if submissions %}
+        <ul>
+            {% for submission in submissions %}
+                <li>
+                    <strong>{{ submission.student.username }}</strong> submitted:
+                    <a href="{{ submission.file.url }}" target="_blank">{{ submission.file.name }}</a> 
+                    at {{ submission.submitted_at }}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="grade_submission" value="1">
+                        <input type="hidden" name="submission_id" value="{{ submission.id }}">
+
+                        <label>Marks:</label>
+                        <input type="number" name="marks" value="{{ submission.marks }}" step="0.1">
+
+                        <label>Feedback:</label>
+                        <textarea name="feedback">{{ submission.feedback }}</textarea>
+
+                        <button type="submit">✅ Grade</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No submissions yet. 🚫</p>
+    {% endif %}
+    {% endif %}
+
+    <a href="{% url 'faculty_dashboard' %}" class="btn">⬅️ Back to Dashboard</a>
+</div>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    label {
+        font-weight: bold;
+    }
+    input, textarea, button {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

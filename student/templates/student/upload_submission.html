@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>📤 Upload Submission</h1>
+
+    <nav>
+        <a href="{% url 'student_dashboard' %}" class="btn">🏠 Dashboard</a>
+        <a href="{% url 'student_profile' %}" class="btn">👤 Profile</a>
+        <a href="{% url 'logout' %}" class="btn">🚪 Logout</a>
+    </nav>
+
+    <hr>
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="file">Select File:</label>
+        <input type="file" name="file" required>
+        <button type="submit" class="btn">📥 Submit</button>
+    </form>
+
+    <a href="{% url 'view_classroom' assignment.classroom.id %}" class="btn">🔙 Back to Classroom</a>
+
+</div>
+{% endblock %}

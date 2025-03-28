@@ -1,17 +1,11 @@
 from django import forms
-from accounts.models import User
+from .models import Assignment
 
-# ✅ Form for editing faculty profile
-class EditFacultyProfileForm(forms.ModelForm):
+# ✅ Form for Assignment Upload
+class AssignmentForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone', 'profile_photo']
-
-from django import forms
-from .models import Classroom
-
-# ✅ Classroom Creation Form
-class ClassroomForm(forms.ModelForm):
-    class Meta:
-        model = Classroom
-        fields = ['name', 'description']
+        model = Assignment
+        fields = ['title', 'description', 'due_date', 'marks']
+        widgets = {
+            'due_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

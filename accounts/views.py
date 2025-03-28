@@ -21,32 +21,47 @@ def signup_view(request):
     return render(request, 'accounts/signup.html', {'form': form})
 
 
-# ✅ Login view with role-based redirection and previous-page handling
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.contrib import messages
+from .forms import SignUpForm, LoginForm
+from .models import User
+
+
+# ✅ Improved Login View with Proper Redirection
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
-        
+
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            
+            user = authenticate(request, username=username, password=password)
 
-            # Redirect to the previous page or dashboard
-            next_url = request.GET.get('next', '/')
+            if user is not None:
+                login(request, user)
 
-            # Role-based redirection
-            if user.role == 'faculty':
-                return redirect(next_url or '/faculty/dashboard/')
-            elif user.role == 'student':
-                return redirect(next_url or '/student/dashboard/')
+                # 🔥 Redirect based on role
+                if user.role == 'faculty':
+                    return redirect('/faculty/dashboard/')   # Redirect faculty
+                elif user.role == 'student':
+                    return redirect('/student/dashboard/')   # Redirect student
+                else:
+                    return HttpResponse("Invalid role", status=403)
+            
             else:
-                return HttpResponse("Invalid role", status=403)  # Handle unexpected roles
+                messages.error(request, "Invalid username or password")
+        
         else:
-            return render(request, 'accounts/login.html', {'form': form, 'error': 'Invalid username or password'})
-
+            messages.error(request, "Invalid form submission")
+    
     else:
         form = LoginForm()
-    return render(request, 'accounts/login.html', {'form': form})
 
+    return render(request, 'accounts/login.html', {'form': form})
 
 # ✅ Logout view with redirect to login
 @login_required
